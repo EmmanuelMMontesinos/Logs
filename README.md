@@ -130,7 +130,6 @@ Si hay problemas (permisos, disco lleno), se muestra un mensaje en consola y se 
 
 - **Compatibilidad**: Python 3.6+ (usa `pathlib` y `collections.deque`).
 - **Rendimiento**: La rotación y filtrado son eficientes para archivos medianos.
-- **Seguridad**: No valida inputs; sanitiza mensajes si es necesario.
 
 ## Contribuciones
 
