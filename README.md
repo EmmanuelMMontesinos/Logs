@@ -113,7 +113,7 @@ logger.save_warning_log("CPU al 90%")
 
 # Mostrar logs
 logger.show_info_logs(last_n=5)  # Últimas 5 líneas de info
-logger.show_error_logs(filter_date="2026-02-21")  # Errores de hoy
+logger.show_error_logs(filter_date="2026-02-21")
 ```
 
 ### Rotación de Archivos
