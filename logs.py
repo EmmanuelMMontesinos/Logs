@@ -29,7 +29,8 @@ class Logs:
         show_error_logs: Muestra el log de Error
         show_warning_logs: Muestra el log de Warning
     """
-    def __init__(self, directory='./Logs', info="info_logs", error="error_logs", warning="warning_logs", max_size=1024*1024, max_backups=5, extension=".log", encoding="utf-8", console=True):
+    def __init__(self, directory='./Logs', info="info_logs", error="error_logs", warning="warning_logs",
+                max_size=1024*1024, max_backups=5, extension=".log", encoding="utf-8", console=True):
         self.directory = Path(directory)
         self.extension = extension
         self.archive_info = f"{info}.{self.extension}"
@@ -53,7 +54,7 @@ class Logs:
                 backup = file_path.with_suffix(f"{file_path.suffix}.{i}")
                 if backup.exists():
                     if i == self.max_backups:
-                        backup.unlink()  # Eliminar el más antiguo
+                        backup.unlink()
                     else:
                         backup.rename(file_path.with_suffix(f"{file_path.suffix}.{i+1}"))
             # Rotar el archivo actual
@@ -62,8 +63,10 @@ class Logs:
         """Sanitiza el mensaje para evitar caracteres problemáticos."""
         if not isinstance(message, str):
             message = str(message)
+
         message = message.replace('\n', ' ').replace('\r', ' ')
         message = message.strip()
+        
         return message[:1000] 
     def log(self, message:str):
         """_Metodo para mostrar el log en la consola_
