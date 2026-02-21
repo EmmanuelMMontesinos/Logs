@@ -97,7 +97,7 @@ class Logs:
             self.log(f"Error al guardar el log {type_log}, comprueba la ruta o los permisos.")
 
     def save_info_log(self, message:str):
-        """_Metodo que deriba de _save_log para los logs de info_
+        """_Metodo que deriva de _save_log para los logs de info_
 
         Args:
             message (str): _description_
@@ -105,7 +105,7 @@ class Logs:
         self._save_log(message, self.archive_info)  
 
     def save_error_log(self, message:str):
-        """_Metodo que deriba de _save_log para los logs de error_
+        """_Metodo que deriva de _save_log para los logs de error_
 
         Args:
             message (str): _description_
@@ -113,7 +113,7 @@ class Logs:
         self._save_log(message, self.archive_error)
 
     def save_warning_log(self, message:str):
-        """_Metodo que deriba de _save_log para los logs de warning_
+        """_Metodo que deriva de _save_log para los logs de warning_
 
         Args:
             message (str): _description_
@@ -143,7 +143,7 @@ class Logs:
             self.log(f"Error al mostrar el log {type_log}, comprueba la ruta o los permisos.")
 
     def show_info_logs(self, last_n=None, filter_date=None):
-        """_Metodo que deriba de _show_log para los logs de info_
+        """_Metodo que deriva de _show_log para los logs de info_
         
         Args:
             last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
@@ -152,7 +152,7 @@ class Logs:
         self._show_log(last_n, filter_date, self.archive_info)
         
     def show_error_logs(self, last_n=None, filter_date=None):
-        """_Metodo que deriba de _show_log para los logs de error_
+        """_Metodo que deriva de _show_log para los logs de error_
         
         Args:
             last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
@@ -161,7 +161,7 @@ class Logs:
         self._show_log(last_n, filter_date, self.archive_error)
         
     def show_warning_logs(self, last_n=None, filter_date=None):
-        """_Metodo que deriba de _show_log para los logs de warning_
+        """_Metodo que deriva de _show_log para los logs de warning_
         
         Args:
             last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
