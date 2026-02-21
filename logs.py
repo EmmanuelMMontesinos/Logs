@@ -46,7 +46,7 @@ class Logs:
                 self.directory.mkdir(parents=True, exist_ok=True)
             except OSError:
                 self.log("Error al crear la carpeta de logs, comprueba la ruta o los permisos.")
-
+    # Metodo para rotar los archivos
     def _rotate_file(self, file_path: Path):
         """Rota el archivo si supera el tamaño máximo."""
         if file_path.exists() and file_path.stat().st_size >= self.max_size:
@@ -66,7 +66,7 @@ class Logs:
 
         message = message.replace('\n', ' ').replace('\r', ' ')
         message = message.strip()
-        
+
         return message[:1000] 
     def log(self, message:str):
         """_Metodo para mostrar el log en la consola_
@@ -76,70 +76,61 @@ class Logs:
         """
         if self.console:
             print(f"{message}")
+    
+    # Metodos para guardar los logs
+    def _save_log(self, message:str, type_log=None):
+        """_Metodo para guardar el log_
+
+        Args:
+            message (str): Mensaje para guardar en el log
+        """
+        message = self._sanitize_message(message)
+        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+        try:
+            self._rotate_file(self.directory / type_log)
+            with open(f'{self.directory}/{type_log}', 'a', encoding=self.encoding) as f:
+                f.write(f"{timestamp} {message}")
+                f.write('\n')
+            
+            self.log(f"Nuevo log guardado en {type_log}.")
+        except OSError:
+            self.log(f"Error al guardar el log {type_log}, comprueba la ruta o los permisos.")
 
     def save_info_log(self, message:str):
-        """_Metodo para guardar el log info_
+        """_Metodo que deriba de _save_log para los logs de info_
 
         Args:
-            message (str): Mensaje para guardar en el log info
+            message (str): _description_
         """
-        message = self._sanitize_message(message)
-        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
-        try:
-            self._rotate_file(self.directory / self.archive_info)
-            with open(f'{self.directory}/{self.archive_info}', 'a', encoding=self.encoding) as f:
-                f.write(f"{timestamp} {message}")
-                f.write('\n')
-            self.log(f"Nuevo log guardado en {self.archive_info}.")
-        except OSError:
-            self.log("Error al guardar el log info, comprueba la ruta o los permisos.")    
+        self._save_log(message, self.archive_info)  
 
     def save_error_log(self, message:str):
-        """_Metodo para guardar el log error_
+        """_Metodo que deriba de _save_log para los logs de error_
 
         Args:
-            message (str): Mensaje para guardar en el log error
+            message (str): _description_
         """
-        message = self._sanitize_message(message)
-        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
-        try:
-            self._rotate_file(self.directory / self.archive_error)
-            with open(f'{self.directory}/{self.archive_error}', 'a', encoding=self.encoding) as f:
-                f.write(f"{timestamp} {message}")
-                f.write('\n')
-            
-            self.log(f"Nuevo error log guardado en {self.archive_error}.")
-        except OSError:
-            self.log("Error al guardar el log error, comprueba la ruta o los permisos.")
+        self._save_log(message, self.archive_error)
 
     def save_warning_log(self, message:str):
-        """_Metodo para guardar el log warning_
+        """_Metodo que deriba de _save_log para los logs de warning_
 
         Args:
-            message (str): Mensaje para guardar en el log warning
+            message (str): _description_
         """
-        message = self._sanitize_message(message)
-        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
-        try:
-            self._rotate_file(self.directory / self.archive_warning)
-            with open(f'{self.directory}/{self.archive_warning}', 'a', encoding=self.encoding) as f:
-                f.write(f"{timestamp} {message}")
-                f.write('\n')
-            
-            self.log(f"Nuevo warning log guardado en {self.archive_warning}.")
-        except OSError:
-            self.log("Error al guardar el log warning, comprueba la ruta o los permisos.")
+        self._save_log(message, self.archive_warning)
     
-    def show_info_logs(self, last_n=None, filter_date=None):
+    # Metodos para mostrar los logs
+    def _show_log(self, last_n=None, filter_date=None, type_log=None):
         """
-        _Mostrar todos los logs de info por consola_
+        _Mostrar logs por consola_
 
         Args:
             last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
             filter_date (str, optional): Fecha en formato 'YYYY-MM-DD' para filtrar logs. Si None, no filtra.
         """
         try:
-            with open(f'{self.directory}/{self.archive_info}', 'r', encoding=self.encoding) as f:
+            with open(f'{self.directory}/{type_log}', 'r', encoding=self.encoding) as f:
                 lines = f.readlines()
             if filter_date:
                 lines = [line for line in lines if filter_date in line]
@@ -149,44 +140,31 @@ class Logs:
         
             print(''.join(lines))
         except OSError:
-            self.log("Error al mostrar el log info, comprueba la ruta o los permisos.")
+            self.log(f"Error al mostrar el log {type_log}, comprueba la ruta o los permisos.")
+
+    def show_info_logs(self, last_n=None, filter_date=None):
+        """_Metodo que deriba de _show_log para los logs de info_
+        
+        Args:
+            last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
+            filter_date (str, optional): Fecha en formato 'YYYY-MM-DD' para filtrar logs. Si None, no filtra.
+        """
+        self._show_log(last_n, filter_date, self.archive_info)
         
     def show_error_logs(self, last_n=None, filter_date=None):
-        """
-        _Mostrar todos los logs de error por consola_
+        """_Metodo que deriba de _show_log para los logs de error_
+        
         Args:
             last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
             filter_date (str, optional): Fecha en formato 'YYYY-MM-DD' para filtrar logs. Si None, no filtra.
         """
-        try:
-            with open(f'{self.directory}/{self.archive_error}', 'r', encoding=self.encoding) as f:
-                lines = f.readlines()
-            if filter_date:
-                lines = [line for line in lines if filter_date in line]
-            
-            if last_n and last_n > 0:
-                lines = deque(lines, maxlen=last_n)
-        
-            print(''.join(lines))
-        except OSError:
-            self.log("Error al mostrar el log error, comprueba la ruta o los permisos.")
+        self._show_log(last_n, filter_date, self.archive_error)
         
     def show_warning_logs(self, last_n=None, filter_date=None):
-        """
-        _Mostrar todos los logs de warning por consola_
+        """_Metodo que deriba de _show_log para los logs de warning_
+        
         Args:
             last_n (int, optional): Número de últimas lineas a mostrar. Si None, muestra todo.
             filter_date (str, optional): Fecha en formato 'YYYY-MM-DD' para filtrar logs. Si None, no filtra.
         """
-        try:
-            with open(f'{self.directory}/{self.archive_warning}', 'r', encoding=self.encoding) as f:
-                lines = f.readlines()
-            if filter_date:
-                lines = [line for line in lines if filter_date in line]
-            
-            if last_n and last_n > 0:
-                lines = deque(lines, maxlen=last_n)
-        
-            print(''.join(lines))
-        except OSError:
-            self.log("Error al mostrar el log warning, comprueba la ruta o los permisos.")
+        self._show_log(last_n, filter_date, self.archive_warning)
